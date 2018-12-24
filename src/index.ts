@@ -5,6 +5,10 @@ import { verify } from './jwt'
 import * as Koa from 'koa'
 import {Server} from 'http'
 import * as IO from 'socket.io'
+import UserController from './users/controller';
+import User from './users/entity'
+import TreeController from './trees/controller';
+import LoginController from './logins/controller';
 
 const app = new Koa()
 const server = new Server(app.callback())
@@ -14,6 +18,10 @@ const port = process.env.PORT || 4000
 useKoaServer(app, {
   cors: true,
   controllers: [
+      UserController,
+      TreeController,
+      LoginController
+      
    
   ],
   authorizationChecker: (action: Action) => {
@@ -36,10 +44,10 @@ useKoaServer(app, {
     if (header && header.startsWith('Bearer ')) {
       const [ , token ] = header.split(' ')
       
-    //   if (token) {
-    //     const {id} = verify(token)
-    //     return User.findOne(id)
-    //   }
+      if (token) {
+        const {id} = verify(token)
+        return User.findOne(id)
+      }
     }
     return undefined
   }
